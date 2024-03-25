@@ -60,15 +60,15 @@ namespace SCRIBE
 			}
 			return 0;
 		}
-		int GetSpellLevelApprox(RE::SpellItem* theSpell)
+		const int GetSpellLevelApprox(RE::SpellItem* const& theSpell)
 		{
-			if (theSpell->effects[0] && theSpell->effects[0]->baseEffect)
-				return min(GetSpellRank(theSpell) * 25 - 25, theSpell->effects[0]->baseEffect->GetMinimumSkillLevel());
+			if (theSpell->effects.size() != 0 && theSpell->effects.front() && theSpell->effects.front()->baseEffect)
+				return min(GetSpellRank(theSpell) * 25 - 25, theSpell->effects.front()->baseEffect->GetMinimumSkillLevel());
 			return 0;
 		}
 		RE::TESGlobal* GetFilterGlobalForSpell(RE::SpellItem* theSpell)
 		{
-			auto spellLevel = GetSpellLevelApprox(theSpell);
+			const auto& spellLevel = GetSpellLevelApprox(theSpell);
 			auto filterGlob = FORMS::GetSingleton().GlobFilterStrange;
 			if (spellLevel < 25) {
 				filterGlob = FORMS::GetSingleton().GlobFilterNovice;
@@ -111,7 +111,7 @@ namespace SCRIBE
 			bool isHostile = false;
 			for (auto& eff : scrollObj->effects) {
 				isHostile = isHostile || eff->IsHostile();
-				if (eff == FORMS::GetSingleton().SpelDisintegrateEffectTemplate->effects[0])
+				if (eff == FORMS::GetSingleton().SpelDisintegrateEffectTemplate->effects.front())
 					return;
 			}
 
@@ -136,7 +136,7 @@ namespace SCRIBE
 					isLocationArea = isLocationArea || eff->baseEffect->data.delivery == RE::MagicSystem::Delivery::kTargetLocation;
 				}
 				if (isTargeted)
-					scrollObj->effects.emplace_back(FORMS::GetSingleton().SpelDisintegrateEffectTemplate->effects[0]);
+					scrollObj->effects.emplace_back(FORMS::GetSingleton().SpelDisintegrateEffectTemplate->effects.front());
 				//if (isArea)
 				//	scrollObj->effects.emplace_back(effectDisintegrateArea->effects[0]);
 				//if (isLocationArea)
@@ -145,7 +145,7 @@ namespace SCRIBE
 		}
 		void AddRankKeywords(RE::ScrollItem* scrollObj, RE::SpellItem* theSpell)
 		{
-			auto spellLevel = GetSpellLevelApprox(theSpell);
+			const auto& spellLevel = GetSpellLevelApprox(theSpell);
 			if (spellLevel < 25) {
 				scrollObj->AddKeyword(FORMS::GetSingleton().KywdScrollNovice);
 			} else if (spellLevel < 50) {

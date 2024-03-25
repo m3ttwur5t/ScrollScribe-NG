@@ -11,7 +11,7 @@ namespace SCRIBE
 		RE::FormID lexical_cast_formid(const std::string& hex_string);
 		bool IsConcentrationSpell(RE::SpellItem* theSpell);
 		int GetSpellRank(RE::SpellItem* theSpell);
-		int GetSpellLevelApprox(RE::SpellItem* theSpell);
+		const int GetSpellLevelApprox(RE::SpellItem* const& theSpell);
 		RE::TESGlobal* GetFilterGlobalForSpell(RE::SpellItem* theSpell);
 		void AddTierKeywords(RE::ScrollItem* scrollObj, RE::SpellItem* theSpell);
 		void AddDisintegrateEffect(RE::ScrollItem* scrollObj);

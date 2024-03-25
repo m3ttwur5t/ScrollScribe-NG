@@ -822,6 +822,10 @@ namespace SCRIBE
 		std::vector<RE::TESForm*> missedItems;
 
 		for (auto& replacerScroll : dataHandler->GetFormArray<RE::ScrollItem>()) {
+			if (replacerScroll->effects.size() == 0 || replacerScroll->effects.front() == nullptr) {
+				logger::info("Skipped null-effect scroll {} (0x{:08X})", replacerScroll->GetName(), replacerScroll->GetFormID());
+				continue;
+			}
 			if (replacerScroll && !replacerScroll->HasKeyword(SCRIBE::FORMS::GetSingleton().KywdScrollCustom)                               // ignore Scribe's scrolls
 				&& replacerScroll->HasKeyword(SCRIBE::FORMS::GetSingleton().KywdVendorItemScroll) && strlen(replacerScroll->GetName()) > 0  // filter bogus scrolls
 				&& !std::string(replacerScroll->model.c_str()).contains("Actors\\DLC02")) {                                                 // filter Dragonborn spiders which are treated as scroll items
@@ -907,13 +911,23 @@ namespace SCRIBE
 		bool updateFile = !FORMS::GetSingleton().GetUseOffset();
 
 		for (auto& book : dataHandler->GetFormArray<RE::TESObjectBOOK>()) {
-			if (!book || !book->TeachesSpell() || book->GetSpell() == nullptr)
+			logger::info("{} (0x{:08X})", book->fullName.c_str(), book->formID);
+			if (!book || !book->TeachesSpell() || book->GetSpell() == nullptr) {
+				logger::info("Does not teach a valid spell");
 				continue;
+			}
 
 			auto theSpell = book->GetSpell();
-			if (auto castType = theSpell->GetCastingType(); (castType == RE::MagicSystem::CastingType::kConstantEffect) || theSpell->data.costOverride <= 5)
+			if (auto castType = theSpell->GetCastingType(); (castType == RE::MagicSystem::CastingType::kConstantEffect) || theSpell->data.costOverride <= 5) {
+				logger::info("Invalid Casting Type or cost <= 5");
 				continue;
+			}
 
+			if (theSpell->effects.size() == 0 || theSpell->effects.front() == nullptr) {
+				logger::info("Skipped null-effect spell {} (0x{:08X})", theSpell->GetName(), theSpell->GetFormID());
+				continue;
+			}
+			
 			logger::info("{} (0x{:08X}) = SPEL 0x{:08X}", book->fullName.c_str(), book->formID, theSpell->formID);
 
 			auto scrollObj = scrollFactory->Create();
