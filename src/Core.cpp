@@ -911,20 +911,20 @@ namespace SCRIBE
 		bool updateFile = !FORMS::GetSingleton().GetUseOffset();
 
 		for (auto& book : dataHandler->GetFormArray<RE::TESObjectBOOK>()) {
-			logger::info("{} (0x{:08X})", book->fullName.c_str(), book->formID);
+			//logger::info("{} (0x{:08X})", book->fullName.c_str(), book->formID);
 			if (!book || !book->TeachesSpell() || book->GetSpell() == nullptr) {
-				logger::info("Does not teach a valid spell");
+				//logger::info("Does not teach a valid spell");
 				continue;
 			}
 
 			auto theSpell = book->GetSpell();
 			if (auto castType = theSpell->GetCastingType(); (castType == RE::MagicSystem::CastingType::kConstantEffect) || theSpell->data.costOverride <= 5) {
-				logger::info("Invalid Casting Type or cost <= 5");
+				//logger::info("Invalid Casting Type or cost <= 5");
 				continue;
 			}
 
 			if (theSpell->effects.size() == 0 || theSpell->effects.front() == nullptr) {
-				logger::info("Skipped null-effect spell {} (0x{:08X})", theSpell->GetName(), theSpell->GetFormID());
+				//logger::info("Skipped null-effect spell {} (0x{:08X})", theSpell->GetName(), theSpell->GetFormID());
 				continue;
 			}
 			
@@ -1040,7 +1040,7 @@ void OnInit(SKSE::MessagingInterface::Message* const a_msg)
 		SCRIBE::LoadFormIDOffset();
 		SCRIBE::VerifyConfiguration();
 		SCRIBE::PerformIniMigrations();
-		SCRIBE::PerformCleanup();
+		//SCRIBE::PerformCleanup();
 		SCRIBE::GenerateDynamicScrolls();
 		SCRIBE::PatchVanillaScrolls();
 		SCRIBE::PatchSoulGemFormList();
