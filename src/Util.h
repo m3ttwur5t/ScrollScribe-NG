@@ -2,12 +2,10 @@
 
 #include "Bimap.h"
 #include "SimpleIni.h"
-#include "FFIDMAN_API.hpp"
-
 
 namespace SCRIBE
 {
-	inline const std::string_view PLUGIN_NAME = Plugin::NAME;
+
 	namespace UTIL
 	{
 		RE::FormID lexical_cast_formid(const std::string& hex_string);
@@ -39,7 +37,7 @@ namespace SCRIBE
 		class Plugin
 		{
 		private:
-			const std::string iniPath = std::format("Data/SKSE/Plugins/{}.ini", SCRIBE::PLUGIN_NAME);
+			const std::string iniPath = "Data/SKSE/Plugins/ScrollScribeNG.ini";
 			CSimpleIniA Ini;
 
 			Plugin()
@@ -65,8 +63,7 @@ namespace SCRIBE
 				return Ini.SectionExists(section.c_str());
 			}
 
-			const std::vector<std::pair<std::string, std::string>> GetAllKeyValuePairs(const std::string& section) const
-			{
+			const std::vector<std::pair<std::string, std::string>> GetAllKeyValuePairs(const std::string& section) const {
 				std::vector<std::pair<std::string, std::string>> ret;
 				CSimpleIniA::TNamesDepend keys;
 				Ini.GetAllKeys(section.c_str(), keys);
@@ -74,7 +71,7 @@ namespace SCRIBE
 					auto val = Ini.GetValue(section.c_str(), key.pItem);
 					ret.push_back({ key.pItem, val });
 				}
-
+				
 				return ret;
 			}
 
@@ -83,8 +80,7 @@ namespace SCRIBE
 				Ini.Delete(section.c_str(), nullptr, true);
 			}
 
-			void DeleteKey(const std::string& section, const std::string& key)
-			{
+			void DeleteKey(const std::string& section, const std::string& key) {
 				Ini.Delete(section.c_str(), key.c_str());
 			}
 
@@ -158,12 +154,10 @@ namespace SCRIBE
 		RE::FormID CurrentOffset;
 		bool UseOffset;
 
-		void SetOffset(RE::FormID offset)
-		{
+		void SetOffset(RE::FormID offset) {
 			CurrentOffset = offset;
 		}
-		void SetUseOffset(bool use)
-		{
+		void SetUseOffset(bool use) {
 			UseOffset = use;
 		}
 		bool GetUseOffset() const
@@ -172,13 +166,8 @@ namespace SCRIBE
 		}
 		RE::FormID NextFormID() const
 		{
-			static auto idman = FFIDMAN_API::Manager::GetInstance();
-			if (idman->IsLoaded()) {
-				return idman->GetNextFormID(SCRIBE::PLUGIN_NAME.data());
-			} else {
-				static RE::FormID current = 0;
-				return FORMID_OFFSET_BASE + (++current) + CurrentOffset;
-			}
+			static RE::FormID current = 0;
+			return FORMID_OFFSET_BASE + (++current) + CurrentOffset;
 		}
 
 		RE::TESObjectMISC* MiscPaperRoll = RE::TESForm::LookupByID<RE::TESObjectMISC>(0x33761);
@@ -201,8 +190,8 @@ namespace SCRIBE
 		RE::BGSKeyword* KywdScrollMaster = RE::TESDataHandler::GetSingleton()->LookupForm<RE::BGSKeyword>(0x80B, "Scribe.esp"sv);       // _scrMasterSpell
 		RE::BGSKeyword* KywdScrollStrange = RE::TESDataHandler::GetSingleton()->LookupForm<RE::BGSKeyword>(0x81D, "Scribe.esp"sv);      // _scrStrangeSpell
 
-		RE::BGSKeyword* KywdFused = RE::TESDataHandler::GetSingleton()->LookupForm<RE::BGSKeyword>(0x82C, "Scribe.esp"sv);        // _scrKeywordScrollFused
-		RE::BGSKeyword* KywdDoubleFused = RE::TESDataHandler::GetSingleton()->LookupForm<RE::BGSKeyword>(0x840, "Scribe.esp"sv);  // _scrKeywordScrollFusedTWICE
+		RE::BGSKeyword* KywdFused = RE::TESDataHandler::GetSingleton() -> LookupForm<RE::BGSKeyword>(0x82C, "Scribe.esp"sv);        // _scrKeywordScrollFused
+		RE::BGSKeyword* KywdDoubleFused = RE::TESDataHandler::GetSingleton() -> LookupForm<RE::BGSKeyword>(0x840, "Scribe.esp"sv);  // _scrKeywordScrollFusedTWICE
 
 		RE::SpellItem* SpelDisintegrateEffectTemplate = RE::TESDataHandler::GetSingleton()->LookupForm<RE::SpellItem>(0x849, "Scribe.esp"sv);  // _scrDustDisintegrateAbility
 
@@ -220,7 +209,7 @@ namespace SCRIBE
 
 	private:
 		// Private constructor to prevent instantiation
-		FORMS() {}
+		FORMS() { }
 
 		// Delete copy constructor and assignment operator to prevent cloning
 		FORMS(const FORMS&) = delete;
