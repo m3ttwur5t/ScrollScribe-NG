@@ -150,7 +150,7 @@ namespace SCRIBE
 			return instance;
 		}
 
-		static const RE::FormID FORMID_OFFSET_BASE = 0xFF010000;
+		static const RE::FormID FORMID_OFFSET_BASE = 0xFF030000;
 		RE::FormID CurrentOffset;
 		bool UseOffset;
 
