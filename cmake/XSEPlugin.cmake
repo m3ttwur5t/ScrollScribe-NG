@@ -72,7 +72,6 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
 		"${PROJECT_NAME}"
 		PRIVATE
 			/MP
-			/await
 			/W4
 			/WX
 			/permissive-
@@ -114,12 +113,33 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
 endif()
 
 if (BUILD_SKYRIM)
-	find_package(CommonLibSSE REQUIRED)
+	# CommonLibSSE-NG is consumed from the lib/commonlibsse-ng git submodule
+	# (alandtse/CommonLibSSE-NG, tracks current Skyrim SE/AE/VR 1.7.x runtimes).
+	# The old vcpkg-registry distribution (colorglass registry, 3.x line) is
+	# no longer maintained.
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/commonlibsse-ng/CMakeLists.txt")
+		message(FATAL_ERROR
+			"CommonLibSSE-NG is not checked out. Run:\n"
+			"  git submodule update --init --recursive")
+	endif()
+
+	# We only want the library itself, not its unit tests.
+	set(BUILD_TESTS OFF CACHE BOOL "Build CommonLibSSE unit tests" FORCE)
+
+	add_subdirectory(
+		"${CMAKE_CURRENT_SOURCE_DIR}/lib/commonlibsse-ng"
+		"${CMAKE_CURRENT_BINARY_DIR}/commonlibsse-ng"
+		EXCLUDE_FROM_ALL)
 else()
 	add_subdirectory(${CommonLibPath} ${CommonLibName} EXCLUDE_FROM_ALL)
 endif()
 
 find_package(spdlog CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(SimpleIni CONFIG REQUIRED)
+
+# include/PCH.h includes xbyak directly (legacy trampoline boilerplate).
+find_path(XBYAK_INCLUDE_DIR "xbyak/xbyak.h" REQUIRED)
 
 target_include_directories(
 	"${PROJECT_NAME}"
@@ -130,8 +150,25 @@ target_include_directories(
 		${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+target_include_directories(
+	"${PROJECT_NAME}"
+	SYSTEM PRIVATE
+		${XBYAK_INCLUDE_DIR}
+)
+
 target_link_libraries(
 	"${PROJECT_NAME}" 
 	PUBLIC 
 		CommonLibSSE::CommonLibSSE
+	PRIVATE
+		fmt::fmt
 )
+
+# The exported target name for the SimpleIni port varies; link whichever exists.
+if(TARGET SimpleIni::SimpleIni)
+	target_link_libraries(${PROJECT_NAME} PRIVATE SimpleIni::SimpleIni)
+elseif(TARGET SimpleIni)
+	target_link_libraries(${PROJECT_NAME} PRIVATE SimpleIni)
+else()
+	message(FATAL_ERROR "SimpleIni package found but no linkable target (expected SimpleIni::SimpleIni or SimpleIni)")
+endif()

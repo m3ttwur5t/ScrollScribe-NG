@@ -1,5 +1,11 @@
 #pragma once
 
+// Must be defined before any Windows.h include (the CLSSE header chain pulls
+// in Windows.h early): winspool.h otherwise defines the AddForm/min/max
+// macros, which collide with RE::BGSListForm::AddForm and std::min/max.
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+
 #pragma warning(push)
 #if defined(FALLOUT4)
 #	include "F4SE/F4SE.h"
@@ -23,7 +29,6 @@
 
 #pragma warning(pop)
 
-#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 using namespace std::literals;
@@ -64,7 +69,6 @@ namespace stl
 }
 
 namespace logger = SKSE::log;
-namespace WinAPI = SKSE::WinAPI;
 
 namespace util
 {
@@ -106,10 +110,10 @@ void InitializeLog()
 	spdlog::set_pattern("%v"s);
 }
 
-extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
+SKSE_PLUGIN_LOAD(const SKSE::LoadInterface* a_skse)
 {
 #ifndef NDEBUG
-	while (!WinAPI::IsDebuggerPresent()) {};
+	while (!::IsDebuggerPresent()) {};
 #endif
 	InitializeLog();
 	logger::info("Loaded plugin");
@@ -120,16 +124,16 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	return Load();
 }
 
-extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() noexcept {
+SKSE_PLUGIN_VERSION = []() noexcept {
 	SKSE::PluginVersionData v;
 	v.PluginName(Plugin::NAME.data());
 	v.PluginVersion(Plugin::VERSION);
-	v.UsesAddressLibrary(true);
-	v.HasNoStructUse();
+	v.UsesAddressLibrary();
+	v.UsesNoStructs();
 	return v;
 }();
 
-extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface*, SKSE::PluginInfo* pluginInfo)
+SKSE_PLUGIN_QUERY(const SKSE::QueryInterface*, SKSE::PluginInfo* pluginInfo)
 {
 	pluginInfo->name = SKSEPlugin_Version.pluginName;
 	pluginInfo->infoVersion = SKSE::PluginInfo::kVersion;

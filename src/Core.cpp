@@ -972,10 +972,10 @@ namespace SCRIBE
 			SCRIBE::UTIL::AddRankKeywords(scrollObj, theSpell);
 
 			int baseDustCost = std::max<int>(spellRank * 5, SCRIBE::UTIL::GetSpellLevelApprox(theSpell)) + static_cast<int>(std::max<float>(std::min<float>(theSpell->GetCostliestEffectItem()->cost, 500), static_cast<float>(theSpell->data.costOverride)));
-			baseDustCost = max(baseDustCost / 4, 5);
+			baseDustCost = std::max(baseDustCost / 4, 5);
 			if (isConcentration)
 				baseDustCost *= 2;
-			int reducedDustCost = max((baseDustCost * 66) / 100, 5);
+			int reducedDustCost = std::max((baseDustCost * 66) / 100, 5);
 
 			scrollObj->value = baseDustCost;
 

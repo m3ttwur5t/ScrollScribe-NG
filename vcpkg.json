@@ -1,11 +1,13 @@
 {
-  "name": "commonlibsse-plugin",
-  "version-string": "1.0.0",
-  "description": "",
-  "license": "MIT",
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "scrollscribe",
+  "version-string": "1.1.1",
   "dependencies": [
-    "commonlibsse-ng",
-	"simpleini"
-  ],
-  "builtin-baseline": "36fb23307e10cc6ffcec566c46c4bb3f567c82c6"
+    "directxtk",
+    "fmt",
+    "rapidcsv",
+    "simpleini",
+    "xbyak",
+    "spdlog"
+  ]
 }

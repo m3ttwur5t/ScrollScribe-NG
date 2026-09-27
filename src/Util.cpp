@@ -63,7 +63,7 @@ namespace SCRIBE
 		const int GetSpellLevelApprox(RE::SpellItem* const& theSpell)
 		{
 			if (theSpell->effects.size() != 0 && theSpell->effects.front() && theSpell->effects.front()->baseEffect)
-				return min(GetSpellRank(theSpell) * 25 - 25, theSpell->effects.front()->baseEffect->GetMinimumSkillLevel());
+				return std::min(GetSpellRank(theSpell) * 25 - 25, theSpell->effects.front()->baseEffect->GetMinimumSkillLevel());
 			return 0;
 		}
 		RE::TESGlobal* GetFilterGlobalForSpell(RE::SpellItem* theSpell)
@@ -221,7 +221,7 @@ namespace SCRIBE
 			nodeSpellLearnedFirst->data.flags.isOR = true;
 
 			nodeHasInscriptionLevel->next = nodeSpellLearnedSecond;
-			nodeHasInscriptionLevel->data.comparisonValue.f = max(0, spellRank - 1) * 20.0f;
+			nodeHasInscriptionLevel->data.comparisonValue.f = std::max(0, spellRank - 1) * 20.0f;
 			nodeHasInscriptionLevel->data.flags.opCode = RE::CONDITION_ITEM_DATA::OpCode::kGreaterThanOrEqualTo;
 			nodeHasInscriptionLevel->data.functionData.function = RE::FUNCTION_DATA::FunctionID::kGetGlobalValue;
 			nodeHasInscriptionLevel->data.functionData.params[0] = FORMS::GetSingleton().GlobScribeLevel;
@@ -274,7 +274,7 @@ namespace SCRIBE
 			DDnodeSpellLearnedFirst->data.flags.isOR = true;
 
 			DDnodeHasInscriptionLevel->next = DDnodeSpellLearnedSecond;
-			DDnodeHasInscriptionLevel->data.comparisonValue.f = max(0, spellRank - 1) * 20.0f;
+			DDnodeHasInscriptionLevel->data.comparisonValue.f = std::max(0, spellRank - 1) * 20.0f;
 			DDnodeHasInscriptionLevel->data.flags.opCode = RE::CONDITION_ITEM_DATA::OpCode::kGreaterThanOrEqualTo;
 			DDnodeHasInscriptionLevel->data.functionData.function = RE::FUNCTION_DATA::FunctionID::kGetGlobalValue;
 			DDnodeHasInscriptionLevel->data.functionData.params[0] = FORMS::GetSingleton().GlobScribeLevel;
